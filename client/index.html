@@ -4,13 +4,12 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
-    <title>eCommerce</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>eCommerce</title>
   </head>
   <body>
     <div id="app">
@@ -32,9 +31,6 @@
                             <a class="dropdown-item" href="#">Sandals</a>
                             <a class="dropdown-item" href="#">Slipper</a>
                             <a class="dropdown-item" href="#">Boat Shoes</a>
-                        <!-- <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div> -->
                     </li>
                     <li>
                         <form class="form-inline my-2 my-lg-0">
@@ -76,10 +72,10 @@
                                                         <td style="width:50px;"><img style="width:50px !important;" v-bind:src="dataCart.img"> </td>
                                                         <td style="width:200px;">{{ dataCart.title }}</td>
                                                         <!-- <td style="width:100px;">{{ dataCart.qty }}</td> -->
-                                                        <td style="width:50px;"><input  style="width:50px;" type="number" v-model="dataCart.qty"></td>
-                                                        <td style="width:100px;">{{ dataCart.price|sumPrice }}</td>
+                                                        <td style="width:50px;"><input  style="width:30px;" type="number" v-model="dataCart.qty"></td>
+                                                        <td style="width:100px;">{{ sumPrice(dataCart.price) }}</td>
                                                         <td style="width:100px;">
-                                                            <input type="button" value="x" v-on:click="deleteChart(i,dataCart.id)">
+                                                            <input type="button" value="x" v-on:click="deleteChart(i,dataCart.id,dataCart.qty)">
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -88,7 +84,10 @@
                                     </div>
                                     <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                    <button type="button" class="btn btn-primary">Checkout</button>
+
+                                    
+
                                     </div>
                                 </div>
                                 </div>
@@ -96,45 +95,23 @@
                         </div>
                     </li>
                 </ul>
+
                 <ul class="navbar-nav justify-content-end">
                     <li>
-                        <!-- Button trigger modal -->
-                        <a class="btn btn-outline-primary" data-toggle="modal" data-target="#loginModal" href="#">Daftar</a>
-                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal">
-                            Daftar
-                        </button> -->
+                        <a class="btn btn-outline-primary" href="admin/product.html">Admin</a>
                     </li>
                     <li>
-                        <!-- Button trigger modal -->
+                        <a class="btn btn-outline-primary" href="register.html">Daftar</a>
+                    </li>
+                    <li>
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal">
                             Masuk
                         </button>
-                        
-                        <!-- Modal Login -->
-                        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Login Modal
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
                     </li>
                 </ul>
             </div>
         </nav>
-    
+        
         <div class="container">
             <div class="row">
                 <div class="col-md-12 sliders">
@@ -168,19 +145,17 @@
             </div>
 
             <div class="row hot-list">
-                <div class="col-12 col-sm-12 col-md-3"  v-for="product in products">
+                <div class="col-12 col-sm-12 col-md-3"  v-for="product,index in products" :key="product._id">
                     <div class="card" >
                         <a href="#">
-                            <img class="card-img-top" v-bind:src="product.img"  alt="Card image cap">
+                            <img class="card-img-top" v-bind:src="product.image"  alt="Card image cap">
                         </a>
                         <div class="card-body">
                             <a href="#">
-                                <h5 class="card-title">{{ product.title}}</h5>
+                                <h5 class="card-title">{{ product.name}}</h5>
                             </a>
                             <p class="card-text"> {{ product.price }} <span>Stock: {{ product.stock }}</span></p>
-                            <!-- <a href="#" class="btn btn-sm btn-primary btn-buy" v-on:click="addCart(product)">Buy</a> -->
-                            <!-- <a href="" class="btn btn-sm btn-primary btn-buy" v-on:click="addCart(product)">Buy</a> -->
-                            <input type="button" value="Buy" class="btn btn-sm btn-primary btn-buy disable" v-on:click="addCart(product)" v-if="product.stock >= 1">
+                            <input type="button" value="Buy" class="btn btn-sm btn-primary btn-buy disable" v-on:click="addCart(product, index)" v-if="product.stock >= 1">
                         </div>
                     </div>
                 </div>

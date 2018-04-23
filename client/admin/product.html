@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+  <div id="app">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">E-<b>Admin</b></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+      </div>
+    </nav>
+    <div class="container">
+        <!-- <div id="form">
+        </div> -->
+        <br><br><br>
+        <h3 style="float:left;">Data Products</h3>
+        
+        <button style="float: right; margin:20px;" type=""button class="btn btn-primary" data-toggle="modal" data-target="#modalAddProduct">Add Product</button>
+        
+        <div class="modal fade" id="modalAddProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                    <div class="form-group">
+                      <label for="exampleInputName">Name product</label>
+                      <input type="text" v-model="productname" class="form-control" id="exampleInputName" aria-describedby="emailHelp" placeholder="Product name">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputStock">Stock</label>
+                      <input type="text" v-model="productstock" class="form-control" id="exampleInputStock" placeholder="Stock">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputPrice">Price</label>
+                      <input type="text" v-model="productprice" class="form-control" id="exampleInputPrice" placeholder="Price">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleDescription">Description</label>
+                      <textarea class="form-control" v-model="productdesc" id="exampleDescription" rows="3" placeholder="Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleImageProduct">Image Product</label>
+                      <input type="file" class="form-control-file" id="exampleImageProduct" @change="takeFile">
+                    </div>                    
+                    <button type="submit" class="btn btn-primary" v-on:click="simpanProduct" ref="image">Submit</button>
+                  <!-- </form> -->
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+        <div id="tableproducts">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th style="width:30px;">Image</th>
+                <th style="width:50px;">Name Product</th>
+                <th style="width:50px;">Price</th>
+                <th style="width:30px !important;">Stock</th>
+                <th style="width:50px;">Description</th>
+                <th style="width:100px;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="product,index in products">
+                <td><img style="width:50px; border:thin solid #ccc;" v-bind:src="product.image"></td>
+                <td style="width:150px;">{{ product.name }}</td>
+                <td>{{ rupiahFormat(product.price) }}</td>
+                <td>{{ product.stock }}</td>
+                <td style="width:300px;">{{ descriptionLimit(product.description) }}</td>
+                <td>
+                  <button @click="editProduct(product._id)" data-toggle="modal" data-target="#modalEditProduct">Edit</button>
+                  
+                  
+                                <div class="modal fade" id="modalEditProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                      <div class="modal-content">
+                          
+                                        <div class="modal-header" >
+                                          <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="cancelForm">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                          
+                                        <div class="modal-body" v-for="formDataEdit in editForm">
+                                              <div class="form-group">
+                                                <label for="exampleInputName">Name product</label>
+                                                <input type="text" v-model="formDataEdit.name" class="form-control" id="exampleInputName" aria-describedby="emailHelp" placeholder="Product name">
+                                              </div>
+                                              <div class="form-group">
+                                                <label for="exampleInputStock">Stock</label>
+                                                <input type="text" v-model="formDataEdit.stock" class="form-control" id="exampleInputStock" placeholder="Stock">
+                                              </div>
+                                              <div class="form-group">
+                                                <label for="exampleInputPrice">Price</label>
+                                                <input type="text" v-model="formDataEdit.price" class="form-control" id="exampleInputPrice" placeholder="Price">
+                                              </div>
+                                              <div class="form-group">
+                                                <label for="exampleDescription">Description</label>
+                                                <textarea class="form-control" v-model="formDataEdit.description" id="exampleDescription" rows="3" placeholder="Description"></textarea>
+                                              </div>
+                                              <div class="form-group">
+                                                <label for="exampleImageProduct">Image Product</label>
+                                                <input type="file" class="form-control-file" id="exampleImageProduct" @change="takeFile">
+                                              </div>                    
+                                              <button type="submit" class="btn btn-primary" v-on:click="simpanProduct" ref="image">Submit</button>
+                                            <!-- </form> -->
+                                        </div>
+                                        
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                  <button @click="deleteProduct(index, product._id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+    
+        </div>
+    </div>
+
+
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      name: 'produk',
+      data: {
+        productname: '',
+        productstock: '',
+        productprice: '',
+        productdesc: '',
+        productimg: '',
+        products: [],
+        formData: new FormData(),
+        file: null,
+        editForm: []
+      },
+      created: function() {
+
+        axios.get('http://localhost:3000/products/list')
+        .then(response => {
+          let data = response.data.data
+          console.log(data)
+          data.forEach(product => {
+            this.products.push(product)
+          });
+        })
+      },
+      
+      methods: {
+        cancelForm: function () {
+          this.editForm = []
+        },
+        takeFile (event) {
+          console.log('----> event',event)
+            this.file = event.target.files[0];
+        },
+        simpanProduct: function () {
+          this.formData.set('name', this.productname)
+          this.formData.set('price', this.productprice)
+          this.formData.set('stock', this.productstock)
+          this.formData.set('description', this.productdesc)
+          this.formData.set('avatar', this.file)
+          
+          axios({
+            method: 'post',
+            url: 'http://localhost:3000/products/create',
+            data: this.formData
+          })
+          .then(({data}) => {
+            console.log('data terkirim versi client sih')
+            $('#modal').modal('hide');
+          })
+
+        },
+        descriptionLimit: function (description) {      
+          var res = description.substr(1, 100)
+          return res + '...'
+        },
+        rupiahFormat: function (number) {
+          return 'Rp ' + number.toLocaleString() + ',-'
+        },
+        editProduct: function (key) {
+          console.log(key)
+          this.products.forEach(product => {
+            if(product._id == key) {
+              console.log('ID sama-sama', product._id)
+              let dataEdit = {
+                name: product.name,
+                stock: product.stock,
+                price: product.price,
+                description: product.description,
+              }
+              
+              this.editForm.push(dataEdit)
+            }
+          })
+        },
+        deleteProduct: function (index, key) {
+          if(confirm('Yakin nih mau hapus?')) {
+            this.products.splice(index, 1)
+            axios({
+              method: 'delete',
+              url: `http://localhost:3000/products/delete/${key}`
+            })
+            .then( () => {
+              console.log('Data product berhasil dihapus !')
+            })
+            .catch((err) => {
+              console.log(err.message)
+            })
+          }
+        }
+      },
+      computed: {
+        
+      }
+    })
+  </script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
