@@ -41,7 +41,7 @@ new Vue({
                 this.products[index].stock -= 1
                     let obj = {
                         id: val._id,
-                        img: val.urlimage,
+                        img: val.image,
                         title: val.name,
                         price: val.price,
                         qty: 1
@@ -56,7 +56,7 @@ new Vue({
                 this.products[index].stock -= 1
                 let obj = {
                     id: val._id,
-                    img: val.urlimage,
+                    img: val.image,
                     title: val.name,
                     price: val.price,
                     qty: 1

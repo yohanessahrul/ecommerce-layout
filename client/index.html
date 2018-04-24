@@ -21,7 +21,7 @@
             
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown">
+                    <!-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Category
                         </a>
@@ -31,7 +31,8 @@
                             <a class="dropdown-item" href="#">Sandals</a>
                             <a class="dropdown-item" href="#">Slipper</a>
                             <a class="dropdown-item" href="#">Boat Shoes</a>
-                    </li>
+                        </div>
+                    </li> -->
                     <li>
                         <form class="form-inline my-2 my-lg-0">
                             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -83,11 +84,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Checkout</button>
-
-                                    
-
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Checkout</button>
                                     </div>
                                 </div>
                                 </div>
@@ -144,6 +142,7 @@
                 </div>
             </div>
 
+            <!-- <product-list></product-list> -->
             <div class="row hot-list">
                 <div class="col-12 col-sm-12 col-md-3"  v-for="product,index in products" :key="product._id">
                     <div class="card" >
@@ -164,6 +163,7 @@
         </div> <!--container-->
         
     </div> <!--app-->
+    <script src="./script/component/product-list.js"></script>
     <script src="./script/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
