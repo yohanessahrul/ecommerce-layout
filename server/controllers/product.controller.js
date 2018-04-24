@@ -16,7 +16,10 @@ module.exports = {
       })
     newProduct.save()
     .then(response => {
-      message: 'New item created !'
+      res.status(200).json({
+        message: 'New item created !',
+        data: response
+      })
       console.log('New item created =>', response)
     })
     .catch(err => {
