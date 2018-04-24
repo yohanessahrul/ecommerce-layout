@@ -177,7 +177,7 @@
       },
       created: function() {
 
-        axios.get('http://35.187.250.162:3000/products/list')
+        axios.get('http://35.187.250.162/products/list')
         .then(response => {
           let data = response.data.data
           console.log(data)
@@ -204,7 +204,7 @@
           
           axios({
             method: 'post',
-            url: 'http://35.187.250.162:3000/products/create',
+            url: 'http://35.187.250.162/products/create',
             data: this.formData
           })
           .then((response) => {
@@ -246,7 +246,7 @@
             this.products.splice(index, 1)
             axios({
               method: 'delete',
-              url: `http://35.187.250.162:3000/products/delete/${key}`
+              url: `http://35.187.250.162/products/delete/${key}`
             })
             .then( () => {
               console.log('Data product berhasil dihapus !')
